@@ -23,10 +23,20 @@ type AppConfig struct {
 	environment string
 }
 
+type Config interface {
+	Logger() *zap.Logger
+	ServerAddress() string
+	UserDataFilePath() string
+}
+
 func (a *AppConfig) Logger() *zap.Logger {
 	return a.logger
 }
 
 func (a *AppConfig) ServerAddress() string {
 	return viper.GetString("SERVER_PORT")
+}
+
+func (a *AppConfig) UserDataFilePath() string {
+	return viper.GetString("FILE_PATH")
 }
