@@ -3,6 +3,7 @@ package auth_app
 import (
 	"auth-app/internal/api"
 	"auth-app/internal/config"
+	"auth-app/internal/storage"
 
 	"github.com/google/uuid"
 	"github.com/labstack/echo/v4"
@@ -27,6 +28,8 @@ func NewServer(cfg *config.AppConfig) *Server {
 			return uuid.New().String()
 		},
 	}))
+
+	_ = storage.New(cfg)
 
 	registerHandlers(e, &api.HealthCheck{})
 
