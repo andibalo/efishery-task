@@ -3,15 +3,16 @@ module auth-app
 go 1.18
 
 require (
+	github.com/golang-jwt/jwt v3.2.2+incompatible
 	github.com/google/uuid v1.1.2
 	github.com/labstack/echo/v4 v4.9.0
+	github.com/sethvargo/go-password v0.2.0
 	github.com/spf13/viper v1.13.0
 	go.uber.org/zap v1.23.0
 )
 
 require (
 	github.com/fsnotify/fsnotify v1.5.4 // indirect
-	github.com/golang-jwt/jwt v3.2.2+incompatible // indirect
 	github.com/hashicorp/hcl v1.0.0 // indirect
 	github.com/labstack/gommon v0.3.1 // indirect
 	github.com/magiconair/properties v1.8.6 // indirect

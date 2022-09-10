@@ -2,7 +2,9 @@ package auth_app
 
 import (
 	"auth-app/internal/api"
+	v1 "auth-app/internal/api/v1"
 	"auth-app/internal/config"
+	"auth-app/internal/service"
 	"auth-app/internal/storage"
 
 	"github.com/google/uuid"
@@ -29,9 +31,12 @@ func NewServer(cfg *config.AppConfig) *Server {
 		},
 	}))
 
-	_ = storage.New(cfg)
+	store := storage.New(cfg)
 
-	registerHandlers(e, &api.HealthCheck{})
+	userService := service.NewUserService(cfg, store)
+	userHandler := v1.NewUserController(userService)
+
+	registerHandlers(e, &api.HealthCheck{}, userHandler)
 
 	return &Server{
 		echo: e,

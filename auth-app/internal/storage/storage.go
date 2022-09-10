@@ -16,6 +16,7 @@ type Storage interface {
 	CreateUser(user model.User) error
 	FetchAllUsers() (users []model.User, err error)
 	FetchUserByPhoneAndPassword(phone, password string) (user model.User, err error)
+	FetchUserByPhone(phone string) (user model.User, err error)
 }
 
 func New(cfg config.Config) *Store {
@@ -34,4 +35,5 @@ type UserRepo interface {
 	SaveUser(user model.User) (err error)
 	GetAllUsers() (users []model.User, err error)
 	GetUserByPhoneAndPassword(phone, password string) (user model.User, err error)
+	GetUserByPhone(phone string) (user model.User, err error)
 }

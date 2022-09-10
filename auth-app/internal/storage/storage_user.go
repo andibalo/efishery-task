@@ -13,3 +13,7 @@ func (s *Store) FetchAllUsers() (users []model.User, err error) {
 func (s *Store) FetchUserByPhoneAndPassword(phone, password string) (user model.User, err error) {
 	return s.userRepository.GetUserByPhoneAndPassword(phone, password)
 }
+
+func (s *Store) FetchUserByPhone(phone string) (user model.User, err error) {
+	return s.userRepository.GetUserByPhone(phone)
+}

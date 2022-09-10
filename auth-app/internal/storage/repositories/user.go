@@ -7,7 +7,6 @@ import (
 	"errors"
 	"log"
 	"os"
-	"time"
 )
 
 type UserRepository struct {
@@ -29,9 +28,8 @@ func (r *UserRepository) SaveUser(user model.User) (err error) {
 	}
 	defer file.Close()
 
-	timestampz := time.Now()
 	csvWriter := csv.NewWriter(file)
-	csvWriter.Write([]string{user.Name, user.Phone, user.Role, user.Password, timestampz.Format("02 Jan 06 15:04 MST")})
+	csvWriter.Write([]string{user.Name, user.Phone, user.Role, user.Password, user.Timestampz})
 
 	csvWriter.Flush()
 
@@ -81,4 +79,20 @@ func (r *UserRepository) GetUserByPhoneAndPassword(phone, password string) (user
 	}
 
 	return user, errors.New("Failed to find matching phone and/or password")
+}
+
+func (r *UserRepository) GetUserByPhone(phone string) (user model.User, err error) {
+	users, err := r.GetAllUsers()
+	if err != nil {
+
+		return user, errors.New("Failed to get all users")
+	}
+
+	for _, val := range users {
+		if val.Phone == phone {
+			return val, nil
+		}
+	}
+
+	return user, errors.New("Failed to find matching phone")
 }
