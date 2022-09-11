@@ -1,6 +1,7 @@
 package v1
 
 import (
+	"errors"
 	voerrors "fetch-app/internal/autherrors"
 	"fetch-app/internal/config"
 	"fetch-app/internal/constants"
@@ -8,6 +9,7 @@ import (
 	"fetch-app/internal/response"
 	"fetch-app/internal/service"
 	"fmt"
+	"github.com/bluele/gcache"
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
 	"net/http"
@@ -36,6 +38,8 @@ func (h *CommodityController) AddRoutes(r *gin.Engine) {
 
 func (h *CommodityController) getAllCommodities(c *gin.Context) {
 
+	h.cfg.Logger().Info("getAllCommodities:  getting all commodities")
+
 	code, commodities, err := h.commodityService.GetAllCommodities()
 
 	if err != nil {
@@ -46,14 +50,37 @@ func (h *CommodityController) getAllCommodities(c *gin.Context) {
 		return
 	}
 
-	code, conversionRate, err := h.currencyService.GetExchangeRate(constants.IndonesiaCurrencyCode, constants.USCurrencyCode)
+	var conversionRate float64
+
+	cachedRate, err := h.cfg.GCache().Get(constants.IDRUSDConversionRate)
 
 	if err != nil {
-		h.cfg.Logger().Error("getAllCommodities: error getting currency conversion rate", zap.Error(err))
+		if errors.Is(err, gcache.KeyNotFoundError) {
+			h.cfg.Logger().Info("getAllCommodities: idr usd conversion rate cache not set")
+		} else {
+			h.cfg.Logger().Error("getAllCommodities: error getting from cache", zap.Error(err))
+		}
+	}
 
-		h.failedCommodityResponse(c, code, err, "error getting exchange rate")
+	if cachedRate == nil {
+		code, conversionRate, err = h.currencyService.GetExchangeRate(constants.IndonesiaCurrencyCode, constants.USCurrencyCode)
 
-		return
+		if err != nil {
+			h.cfg.Logger().Error("getAllCommodities: error getting currency conversion rate", zap.Error(err))
+
+			h.failedCommodityResponse(c, code, err, "error getting exchange rate")
+
+			return
+		}
+
+		err = h.cfg.GCache().SetWithExpire(constants.IDRUSDConversionRate, conversionRate, constants.IDRUSDConversionRateTTL)
+
+		if err != nil {
+			h.cfg.Logger().Error("getAllCommodities: failed setting conversion rate to cache", zap.Error(err))
+		}
+
+	} else {
+		conversionRate, err = strconv.ParseFloat(fmt.Sprintf("%v", cachedRate), 64)
 	}
 
 	transformedCommodities := h.addUSDPriceToList(commodities, conversionRate)
