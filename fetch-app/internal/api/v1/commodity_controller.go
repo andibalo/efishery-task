@@ -5,6 +5,7 @@ import (
 	voerrors "fetch-app/internal/autherrors"
 	"fetch-app/internal/config"
 	"fetch-app/internal/constants"
+	middleware "fetch-app/internal/middlewares"
 	"fetch-app/internal/model"
 	"fetch-app/internal/response"
 	"fetch-app/internal/service"
@@ -33,7 +34,8 @@ func NewCommodityController(cfg config.Config, commodityService service.Commodit
 func (h *CommodityController) AddRoutes(r *gin.Engine) {
 	cr := r.Group(constants.V1BasePath + constants.CommodityBasePath)
 
-	cr.GET("/", h.getAllCommodities)
+	cr.GET("/", middleware.CheckJWTToken(), h.getAllCommodities)
+	cr.GET("/aggregated", middleware.CheckJWTTokenAdmin(), h.getAggregratedCommodities)
 }
 
 func (h *CommodityController) getAllCommodities(c *gin.Context) {
@@ -90,6 +92,13 @@ func (h *CommodityController) getAllCommodities(c *gin.Context) {
 	resp.SetResponseMessage("Successfully get commodities")
 
 	c.JSON(http.StatusOK, resp)
+}
+
+func (h *CommodityController) getAggregratedCommodities(c *gin.Context) {
+
+	h.cfg.Logger().Info("getAllCommodities:  getting all commodities")
+
+	c.JSON(http.StatusOK, "aggregated route")
 }
 
 func (h *CommodityController) failedCommodityResponse(c *gin.Context, code response.Code, err error, errorMsg string) {
