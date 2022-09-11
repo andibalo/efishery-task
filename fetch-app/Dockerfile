@@ -5,6 +5,6 @@ WORKDIR /app
 COPY . .
 
 RUN go mod tidy
-RUN go build -o fetch-app
+RUN env GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -o fetchApp ./cmd
 
-CMD ["./fetch-app"]
+CMD ["./fetchApp"]

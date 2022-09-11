@@ -5,6 +5,6 @@ WORKDIR /app
 COPY . .
 
 RUN go mod tidy
-RUN go build -o auth-app
+RUN env GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -o authApp ./cmd
 
-CMD ["./auth-app"]
+CMD ["./authApp"]
