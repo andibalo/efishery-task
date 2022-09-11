@@ -44,7 +44,7 @@ func (s *userService) CreateUser(createUserReq *request.CreateUserRequest) (resp
 
 	if userIsExist {
 		s.config.Logger().Error("CreateUser: duplicate user", zap.Error(err))
-		return response.BadRequest, user, err
+		return response.BadRequest, user, voerrors.ErrDuplicateUser
 	}
 
 	pass, err := s.generatePassword()
