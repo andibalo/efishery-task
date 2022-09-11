@@ -1,0 +1,25 @@
+version: '3'
+
+services:
+
+  auth-app:
+    build:
+      context: ./../auth-app
+      dockerfile: Dockerfile
+    restart: always
+    deploy:
+      mode: replicated
+      replicas: 1
+    ports:
+      - "5000:5000"
+
+  fetch-app:
+    build:
+      context: ./../fetch-app
+      dockerfile: Dockerfile
+    restart: always
+    deploy:
+      mode: replicated
+      replicas: 1
+    ports:
+      - "5030:5030"
