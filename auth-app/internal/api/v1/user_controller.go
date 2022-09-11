@@ -27,6 +27,31 @@ func (h *UserController) AddRoutes(e *echo.Echo) {
 	r := e.Group(constants.V1BasePath + constants.UserBasePath)
 
 	r.POST("/", h.createUser)
+	r.POST("/login", h.login)
+}
+
+func (h *UserController) login(c echo.Context) error {
+
+	loginUserReq := &request.LoginUserRequest{}
+
+	if err := c.Bind(loginUserReq); err != nil {
+		h.cfg.Logger().Error("login: error binding login request", zap.Error(err))
+
+		return c.JSON(http.StatusInternalServerError, nil)
+	}
+
+	code, token, err := h.userService.GetJWTByPhoneAndPassword(loginUserReq.Phone, loginUserReq.Password)
+
+	if err != nil {
+		h.cfg.Logger().Error("login: error on user service", zap.Error(err))
+		return h.failedUserResponse(c, code, err, "")
+	}
+
+	resp := response.NewResponse(code, token)
+
+	resp.SetResponseMessage("Successfully logged in")
+
+	return c.JSON(http.StatusOK, resp)
 }
 
 func (h *UserController) createUser(c echo.Context) error {

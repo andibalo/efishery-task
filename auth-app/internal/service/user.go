@@ -80,14 +80,16 @@ func (s *userService) GetJWTByPhoneAndPassword(phone, password string) (response
 	user, err := s.store.FetchUserByPhoneAndPassword(phone, password)
 
 	if err != nil {
-		s.config.Logger().Error("GetJWTByPhoneAndPassword: error getting jwt by phone and password", zap.Error(err))
-		return response.ServerError, "", err
+		if !errors.Is(err, voerrors.ErrNotFound) {
+			s.config.Logger().Error("GetJWTByPhoneAndPassword: error getting jwt by phone and password", zap.Error(err))
+			return response.ServerError, "", err
+		}
 	}
 
 	token, err := util.GenerateToken(user)
 
 	if err != nil {
-		s.config.Logger().Error("GetJWTByPhoneAndPassword: error getting jwt by phone and password", zap.Error(err))
+		s.config.Logger().Error("GetJWTByPhoneAndPassword: error generating token", zap.Error(err))
 		return response.ServerError, "", err
 	}
 

@@ -79,7 +79,7 @@ func (r *UserRepository) GetUserByPhoneAndPassword(phone, password string) (user
 		}
 	}
 
-	return user, errors.New("Failed to find matching phone and/or password")
+	return user, voerrors.ErrNotFound
 }
 
 func (r *UserRepository) GetUserByPhone(phone string) (user model.User, err error) {
