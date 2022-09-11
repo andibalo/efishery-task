@@ -4,11 +4,14 @@ import (
 	voerrors "fetch-app/internal/autherrors"
 	"fetch-app/internal/config"
 	"fetch-app/internal/constants"
+	"fetch-app/internal/model"
 	"fetch-app/internal/response"
 	"fetch-app/internal/service"
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
 	"net/http"
+	"strconv"
 )
 
 type CommodityController struct {
@@ -43,7 +46,19 @@ func (h *CommodityController) getAllCommodities(c *gin.Context) {
 		return
 	}
 
-	resp := response.NewResponse(response.Success, commodities)
+	code, conversionRate, err := h.currencyService.GetExchangeRate(constants.IndonesiaCurrencyCode, constants.USCurrencyCode)
+
+	if err != nil {
+		h.cfg.Logger().Error("getAllCommodities: error getting currency conversion rate", zap.Error(err))
+
+		h.failedCommodityResponse(c, code, err, "error getting exchange rate")
+
+		return
+	}
+
+	transformedCommodities := h.addUSDPriceToList(commodities, conversionRate)
+
+	resp := response.NewResponse(response.Success, transformedCommodities)
 
 	resp.SetResponseMessage("Successfully get commodities")
 
@@ -66,4 +81,31 @@ func (h *CommodityController) failedCommodityResponse(c *gin.Context, code respo
 	}
 
 	c.JSON(voerrors.MapErrorsToStatusCode(err), resp)
+}
+
+func (h *CommodityController) addUSDPriceToList(listData []model.Commodity, conversionRate float64) (transformedCommodity []model.Commodity) {
+
+	for _, val := range listData {
+		if val.Price == "" {
+			val.USDPrice = ""
+
+			transformedCommodity = append(transformedCommodity, val)
+			continue
+		}
+		priceFloat, err := strconv.ParseFloat(val.Price, 64)
+		if err != nil {
+			h.cfg.Logger().Error(fmt.Sprintf("Failed to convert price to float for id %v", val.ID), zap.Error(err))
+			val.USDPrice = "error converting"
+
+			transformedCommodity = append(transformedCommodity, val)
+			continue
+		}
+
+		usdPrice := priceFloat * conversionRate
+
+		val.USDPrice = fmt.Sprintf("%f", usdPrice)
+		transformedCommodity = append(transformedCommodity, val)
+	}
+
+	return transformedCommodity
 }
