@@ -1,19 +1,19 @@
 package response
 
 const (
-	Success           Code = "AU0000"
-	ServerError       Code = "AU0001"
-	BadRequest        Code = "AU0002"
-	InvalidRequest    Code = "AU0004"
-	Failed            Code = "AU0073"
-	Pending           Code = "AU0050"
-	InvalidInputParam Code = "AU0032"
-	DuplicateUser     Code = "AU0033"
-	NotFound          Code = "AU0034"
+	Success           Code = "FE0000"
+	ServerError       Code = "FE0001"
+	BadRequest        Code = "FE0002"
+	InvalidRequest    Code = "FE0004"
+	Failed            Code = "FE0073"
+	Pending           Code = "FE0050"
+	InvalidInputParam Code = "FE0032"
+	DuplicateUser     Code = "FE0033"
+	NotFound          Code = "FE0034"
 
-	Unauthorized   Code = "AU0502"
-	Forbidden      Code = "AU0503"
-	GatewayTimeout Code = "AU0048"
+	Unauthorized   Code = "FE0502"
+	Forbidden      Code = "FE0503"
+	GatewayTimeout Code = "FE0048"
 )
 
 type Code string
