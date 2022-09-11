@@ -34,7 +34,7 @@ func NewServer(cfg *config.AppConfig) *Server {
 	store := storage.New(cfg)
 
 	userService := service.NewUserService(cfg, store)
-	userHandler := v1.NewUserController(userService)
+	userHandler := v1.NewUserController(cfg, userService)
 
 	registerHandlers(e, &api.HealthCheck{}, userHandler)
 

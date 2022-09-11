@@ -18,8 +18,9 @@ type UserController struct {
 	userService service.UserService
 }
 
-func NewUserController(userService service.UserService) *UserController {
+func NewUserController(cfg config.Config, userService service.UserService) *UserController {
 	return &UserController{
+		cfg:         cfg,
 		userService: userService,
 	}
 }
@@ -70,7 +71,7 @@ func (h *UserController) createUser(c echo.Context) error {
 
 	if err != nil {
 		h.cfg.Logger().Error("createUser: error on user service", zap.Error(err))
-		return h.failedUserResponse(c, code, err, "")
+		return h.failedUserResponse(c, code, err, "error creating user")
 	}
 
 	resp := response.NewResponse(code, user)
