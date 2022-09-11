@@ -5,6 +5,7 @@ import (
 	v1 "fetch-app/internal/api/v1"
 	"fetch-app/internal/config"
 	"fetch-app/internal/service"
+	"fetch-app/internal/service/external"
 	"github.com/gin-gonic/gin"
 )
 
@@ -18,7 +19,9 @@ func NewServer(cfg *config.AppConfig) *Server {
 
 	commodityService := service.NewCommodityService(cfg)
 
-	commodityHandler := v1.NewCommodityController(cfg, commodityService)
+	currencyService := external.NewCurrencyService(cfg)
+
+	commodityHandler := v1.NewCommodityController(cfg, commodityService, currencyService)
 
 	registerHandlers(router, &api.HealthCheck{}, commodityHandler)
 

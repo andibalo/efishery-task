@@ -26,6 +26,7 @@ type AppConfig struct {
 type Config interface {
 	Logger() *zap.Logger
 	ServerAddress() string
+	CurrencyServiceAPIKey() string
 }
 
 func (a *AppConfig) Logger() *zap.Logger {
@@ -34,4 +35,8 @@ func (a *AppConfig) Logger() *zap.Logger {
 
 func (a *AppConfig) ServerAddress() string {
 	return viper.GetString("SERVER_PORT")
+}
+
+func (a *AppConfig) CurrencyServiceAPIKey() string {
+	return viper.GetString("CURRENCY_SERVICE_API_KEY")
 }

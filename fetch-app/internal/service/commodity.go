@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fetch-app/internal/model"
 	"fetch-app/internal/response"
+	"go.uber.org/zap"
 	"net/http"
 )
 
@@ -22,14 +23,14 @@ func (s *commodityService) GetAllCommodities() (code response.Code, commodities 
 	resp, err := http.Get("https://stein.efishery.com/v1/storages/5e1edf521073e315924ceab4/list")
 	if err != nil {
 
-		s.config.Logger().Error("GetAllCommodities: Failed to fetch from efishery endpoint")
+		s.config.Logger().Error("GetAllCommodities: Failed to fetch from efishery endpoint", zap.Error(err))
 		return response.ServerError, nil, err
 	}
 	defer resp.Body.Close()
 
 	err = json.NewDecoder(resp.Body).Decode(&commodities)
 	if err != nil {
-		s.config.Logger().Error("GetAllCommodities: Failed to decode response from efishery endpoint")
+		s.config.Logger().Error("GetAllCommodities: Failed to decode response from efishery endpoint", zap.Error(err))
 		return response.ServerError, nil, err
 	}
 

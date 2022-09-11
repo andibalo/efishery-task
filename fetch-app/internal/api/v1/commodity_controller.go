@@ -14,12 +14,14 @@ import (
 type CommodityController struct {
 	cfg              config.Config
 	commodityService service.CommodityService
+	currencyService  service.CurrencyService
 }
 
-func NewCommodityController(cfg config.Config, commodityService service.CommodityService) *CommodityController {
+func NewCommodityController(cfg config.Config, commodityService service.CommodityService, currencyService service.CurrencyService) *CommodityController {
 	return &CommodityController{
 		cfg:              cfg,
 		commodityService: commodityService,
+		currencyService:  currencyService,
 	}
 }
 
