@@ -7,6 +7,7 @@ import (
 	"auth-app/internal/request"
 	"auth-app/internal/response"
 	"auth-app/internal/service"
+	"auth-app/internal/util"
 	"github.com/labstack/echo/v4"
 	"go.uber.org/zap"
 	"net/http"
@@ -28,6 +29,7 @@ func (h *UserController) AddRoutes(e *echo.Echo) {
 
 	r.POST("/", h.createUser)
 	r.POST("/login", h.login)
+	r.POST("/details", h.getUserTokenDetails)
 }
 
 func (h *UserController) login(c echo.Context) error {
@@ -74,6 +76,30 @@ func (h *UserController) createUser(c echo.Context) error {
 	resp := response.NewResponse(code, user)
 
 	resp.SetResponseMessage("Successfully created user")
+
+	return c.JSON(http.StatusOK, resp)
+}
+
+func (h *UserController) getUserTokenDetails(c echo.Context) error {
+
+	getUserTokenDetailsReq := &request.GetUserTokenDetailsRequest{}
+
+	if err := c.Bind(getUserTokenDetailsReq); err != nil {
+		h.cfg.Logger().Error("getUserTokenDetails: error binding request", zap.Error(err))
+
+		return c.JSON(http.StatusInternalServerError, nil)
+	}
+
+	details, err := util.ParseToken(getUserTokenDetailsReq.Token)
+
+	if err != nil {
+		h.cfg.Logger().Error("getUserTokenDetails: error parsing token", zap.Error(err))
+		return h.failedUserResponse(c, response.ServerError, err, "")
+	}
+
+	resp := response.NewResponse(response.Success, details)
+
+	resp.SetResponseMessage("Successfully get token details")
 
 	return c.JSON(http.StatusOK, resp)
 }

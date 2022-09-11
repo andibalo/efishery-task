@@ -10,3 +10,7 @@ type LoginUserRequest struct {
 	Phone    string `json:"phone"`
 	Password string `json:"password"`
 }
+
+type GetUserTokenDetailsRequest struct {
+	Token string `json:"token"`
+}
