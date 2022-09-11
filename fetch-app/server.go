@@ -2,7 +2,9 @@ package fetch_app
 
 import (
 	"fetch-app/internal/api"
+	v1 "fetch-app/internal/api/v1"
 	"fetch-app/internal/config"
+	"fetch-app/internal/service"
 	"github.com/gin-gonic/gin"
 )
 
@@ -14,7 +16,11 @@ func NewServer(cfg *config.AppConfig) *Server {
 
 	router := gin.Default()
 
-	registerHandlers(router, &api.HealthCheck{})
+	commodityService := service.NewCommodityService(cfg)
+
+	commodityHandler := v1.NewCommodityController(cfg, commodityService)
+
+	registerHandlers(router, &api.HealthCheck{}, commodityHandler)
 
 	return &Server{
 		gin: router,
