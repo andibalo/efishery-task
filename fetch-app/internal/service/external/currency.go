@@ -3,7 +3,7 @@ package external
 import (
 	"encoding/json"
 	"fetch-app/internal/config"
-	"fetch-app/internal/model"
+	"fetch-app/internal/response"
 	"fmt"
 	"go.uber.org/zap"
 	"io/ioutil"
@@ -21,9 +21,9 @@ func NewCurrencyService(config config.Config) *currencyService {
 	}
 }
 
-func (s *currencyService) GetExchangeRate(baseCode, targetCode string) (float64, error) {
+func (s *currencyService) GetExchangeRate(baseCode, targetCode string) (response.Code, float64, error) {
 
-	var conversionRate *model.ConversionRate
+	var getConversionRateResponse response.GetConversionRateResponse
 
 	s.config.Logger().Info(fmt.Sprintf("Getting exhange rate for %s to %s", baseCode, targetCode))
 
@@ -31,17 +31,17 @@ func (s *currencyService) GetExchangeRate(baseCode, targetCode string) (float64,
 	resp, err := http.Get(url)
 	if err != nil {
 		s.config.Logger().Error("GetExchangeRate: Failed to fetch exchange rate", zap.Error(err))
-		return 0, err
+		return response.ServerError, 0, err
 	}
 	defer resp.Body.Close()
 
 	body, _ := ioutil.ReadAll(resp.Body)
 
-	err = json.Unmarshal(body, conversionRate)
+	err = json.Unmarshal(body, &getConversionRateResponse)
 	if err != nil {
 		s.config.Logger().Error("GetExchangeRate: Failed to parse exchange rate", zap.Error(err))
-		return 0, err
+		return response.ServerError, 0, err
 	}
 
-	return conversionRate.Rate, nil
+	return response.Success, getConversionRateResponse.ConversionRate, nil
 }

@@ -11,7 +11,7 @@ type CommodityService interface {
 }
 
 type CurrencyService interface {
-	GetExchangeRate(baseCode, targetCode string) (float64, error)
+	GetExchangeRate(baseCode, targetCode string) (response.Code, float64, error)
 }
 
 type Config interface {
