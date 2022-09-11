@@ -3,6 +3,7 @@ This repo is my submission for efishery backend engineer skill test. Fingers cro
 # Table of Contents
 * [Prequisites](#prequisites)
 * [Installation](#installation)
+* [Postman Collection](#postman-collection)
 * [Auth-App](#auth-app)
 	* [Environment Variables](#auth-app-environment-variables)
 	* [Endpoints](#auth-app-api)
@@ -14,6 +15,8 @@ This repo is my submission for efishery backend engineer skill test. Fingers cro
 * Docker
 * go 1.18 (optional, used to run directly in local machine)
 
+## Postman Collection
+The postman collection json for this monorepo can be found at `/postman`. You can download it and import it on your local postman application.
 
 ## Installation
 To run `auth-app` and `fetch-app`, you need to have `docker` installed in your machine or `go1.18` if you want to run the app directly in your local machine. Ensure you have nothing on port **5000** (auth-app) 
