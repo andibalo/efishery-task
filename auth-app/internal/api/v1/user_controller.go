@@ -39,14 +39,14 @@ func (h *UserController) createUser(c echo.Context) error {
 		return c.JSON(http.StatusInternalServerError, nil)
 	}
 
-	code, err := h.userService.CreateUser(registerUserReq)
+	code, user, err := h.userService.CreateUser(registerUserReq)
 
 	if err != nil {
 		h.cfg.Logger().Error("createUser: error on user service", zap.Error(err))
 		return h.failedUserResponse(c, code, err, "")
 	}
 
-	resp := response.NewResponse(code, nil)
+	resp := response.NewResponse(code, user)
 
 	resp.SetResponseMessage("Successfully created user")
 

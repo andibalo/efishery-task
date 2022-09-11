@@ -1,6 +1,7 @@
 package repositories
 
 import (
+	voerrors "auth-app/internal/autherrors"
 	"auth-app/internal/config"
 	"auth-app/internal/model"
 	"encoding/csv"
@@ -94,5 +95,5 @@ func (r *UserRepository) GetUserByPhone(phone string) (user model.User, err erro
 		}
 	}
 
-	return user, errors.New("Failed to find matching phone")
+	return user, voerrors.ErrNotFound
 }
