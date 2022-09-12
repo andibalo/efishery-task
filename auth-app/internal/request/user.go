@@ -1,16 +1,16 @@
 package request
 
 type CreateUserRequest struct {
-	Name  string `json:"name"`
-	Phone string `json:"phone"`
-	Role  string `json:"role"`
+	Name  string `json:"name" validate:"required"`
+	Phone string `json:"phone" validate:"required"`
+	Role  string `json:"role" validate:"required"`
 }
 
 type LoginUserRequest struct {
-	Phone    string `json:"phone"`
-	Password string `json:"password"`
+	Phone    string `json:"phone" validate:"required"`
+	Password string `json:"password" validate:"required"`
 }
 
 type GetUserTokenDetailsRequest struct {
-	Token string `json:"token"`
+	Token string `json:"token" validate:"required"`
 }

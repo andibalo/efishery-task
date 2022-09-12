@@ -16,12 +16,17 @@ import (
 type UserController struct {
 	cfg         config.Config
 	userService service.UserService
+	validator   util.Validator
 }
 
 func NewUserController(cfg config.Config, userService service.UserService) *UserController {
+
+	validator := util.GetNewValidator()
+
 	return &UserController{
 		cfg:         cfg,
 		userService: userService,
+		validator:   validator,
 	}
 }
 
@@ -41,6 +46,13 @@ func (h *UserController) login(c echo.Context) error {
 		h.cfg.Logger().Error("login: error binding login request", zap.Error(err))
 
 		return c.JSON(http.StatusInternalServerError, nil)
+	}
+
+	err := h.validator.Validate(loginUserReq)
+
+	if err != nil {
+		validationErrorMessage := err.Error()
+		return h.failedUserResponse(c, response.BadRequest, err, validationErrorMessage)
 	}
 
 	code, token, err := h.userService.GetJWTByPhoneAndPassword(loginUserReq.Phone, loginUserReq.Password)
@@ -67,6 +79,13 @@ func (h *UserController) createUser(c echo.Context) error {
 		return c.JSON(http.StatusInternalServerError, nil)
 	}
 
+	err := h.validator.Validate(registerUserReq)
+
+	if err != nil {
+		validationErrorMessage := err.Error()
+		return h.failedUserResponse(c, response.BadRequest, err, validationErrorMessage)
+	}
+
 	code, user, err := h.userService.CreateUser(registerUserReq)
 
 	if err != nil {
@@ -89,6 +108,13 @@ func (h *UserController) getUserTokenDetails(c echo.Context) error {
 		h.cfg.Logger().Error("getUserTokenDetails: error binding request", zap.Error(err))
 
 		return c.JSON(http.StatusInternalServerError, nil)
+	}
+
+	err := h.validator.Validate(getUserTokenDetailsReq)
+
+	if err != nil {
+		validationErrorMessage := err.Error()
+		return h.failedUserResponse(c, response.BadRequest, err, validationErrorMessage)
 	}
 
 	details, err := util.ParseToken(getUserTokenDetailsReq.Token)
