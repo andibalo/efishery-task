@@ -14,7 +14,7 @@ type Commodity struct {
 
 type AggregratedCommodity struct {
 	Provinsi string `json:"area_provinsi"`
-	Profit   map[string]map[string]int
+	Profit   map[string]map[int]int
 	Max      float64 `json:"max_profit"`
 	Min      float64 `json:"min_profit"`
 	Avg      float64 `json:"average_profit"`

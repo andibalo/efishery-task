@@ -9,6 +9,7 @@ import (
 	"fetch-app/internal/model"
 	"fetch-app/internal/response"
 	"fetch-app/internal/service"
+	"fetch-app/internal/util"
 	"fmt"
 	"github.com/bluele/gcache"
 	"github.com/gin-gonic/gin"
@@ -35,7 +36,7 @@ func (h *CommodityController) AddRoutes(r *gin.Engine) {
 	cr := r.Group(constants.V1BasePath + constants.CommodityBasePath)
 
 	cr.GET("/", middleware.CheckJWTToken(), h.getAllCommodities)
-	cr.GET("/aggregated", middleware.CheckJWTTokenAdmin(), h.getAggregratedCommodities)
+	cr.GET("/aggregated", h.getAggregratedCommodities)
 }
 
 func (h *CommodityController) getAllCommodities(c *gin.Context) {
@@ -94,11 +95,90 @@ func (h *CommodityController) getAllCommodities(c *gin.Context) {
 	c.JSON(http.StatusOK, resp)
 }
 
+type tempData struct {
+	provinsi string
+	amount   int
+	minggu   string
+}
+
 func (h *CommodityController) getAggregratedCommodities(c *gin.Context) {
 
-	h.cfg.Logger().Info("getAllCommodities:  getting all commodities")
+	h.cfg.Logger().Info("getAggregratedCommodities: getting aggregrated commodities")
 
-	c.JSON(http.StatusOK, "aggregated route")
+	code, commodities, err := h.commodityService.GetAllCommodities()
+
+	if err != nil {
+		h.cfg.Logger().Error("getAllCommodities: error getting commodities", zap.Error(err))
+
+		h.failedCommodityResponse(c, code, err, "error fetching commodities")
+
+		return
+	}
+
+	var data []tempData
+
+	for _, val := range commodities {
+		if val.Tanggal == "" || val.Price == "" || val.Size == "" || val.Provinsi == "" {
+			continue
+		}
+
+		dateTime := util.ParseStringToTime(val.Tanggal)
+
+		_, week := dateTime.ISOWeek()
+
+		price, _ := strconv.Atoi(val.Price)
+		size, _ := strconv.Atoi(val.Size)
+		amount := price * size
+
+		temp := tempData{
+			provinsi: val.Provinsi,
+			amount:   amount,
+			minggu:   fmt.Sprintf("week_%s", strconv.Itoa(week)),
+		}
+
+		data = append(data, temp)
+	}
+
+	tempMap := make(map[string]map[string]map[int]int)
+
+	for _, val := range data {
+
+		if prov, ok := tempMap[val.provinsi]; !ok {
+			priceMap := map[int]int{val.amount: val.amount}
+			minggu := map[string]map[int]int{val.minggu: priceMap}
+			tempMap[val.provinsi] = minggu
+		} else {
+
+			if week, ok := prov[val.minggu]; !ok {
+				priceMap := map[int]int{val.amount: val.amount}
+				prov[val.minggu] = priceMap
+			} else {
+
+				if _, ok := week[val.amount]; !ok {
+					week[val.amount] = val.amount
+				}
+			}
+		}
+
+	}
+
+	var result []model.AggregratedCommodity
+
+	for key, val := range tempMap {
+
+		data := model.AggregratedCommodity{
+			Provinsi: key,
+			Profit:   val,
+			Max:      findMaxProfit(val),
+			Min:      findMinProfit(val),
+			Avg:      findAvgProfit(val),
+			Median:   findMedianProfit(val),
+		}
+
+		result = append(result, data)
+	}
+
+	c.JSON(http.StatusOK, result)
 }
 
 func (h *CommodityController) failedCommodityResponse(c *gin.Context, code response.Code, err error, errorMsg string) {
@@ -144,4 +224,62 @@ func (h *CommodityController) addUSDPriceToList(listData []model.Commodity, conv
 	}
 
 	return transformedCommodity
+}
+
+func findMaxProfit(data map[string]map[int]int) float64 {
+	var max int
+	for _, val := range data {
+		for _, amount := range val {
+			if amount >= max {
+				max = amount
+			}
+		}
+	}
+
+	return float64(max)
+}
+
+func findMinProfit(data map[string]map[int]int) float64 {
+
+	min := int(^uint(0) >> 1)
+	for _, val := range data {
+		for _, amount := range val {
+			if amount <= min {
+				min = amount
+			}
+		}
+	}
+
+	return float64(min)
+}
+
+func findAvgProfit(data map[string]map[int]int) float64 {
+	var sum, counter int
+	for _, val := range data {
+		for _, amount := range val {
+			sum += amount
+			counter++
+		}
+	}
+
+	return float64(sum / counter)
+}
+
+func findMedianProfit(data map[string]map[int]int) float64 {
+	var arr []int
+	for _, val := range data {
+		for _, amount := range val {
+			arr = append(arr, amount)
+		}
+	}
+
+	counter := len(arr)
+
+	if counter+1%2 == 0 {
+		a := arr[(counter / 2)]
+		b := arr[(counter/2)+1]
+		return float64((a + b) / 2)
+	} else {
+		return float64(arr[counter/2])
+	}
 }
