@@ -6,6 +6,89 @@
 	},
 	"item": [
 		{
+			"name": "fetch-app",
+			"item": [
+				{
+					"name": "Health check",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "0.0.0.0:5030/health",
+							"host": [
+								"0",
+								"0",
+								"0",
+								"0"
+							],
+							"port": "5030",
+							"path": [
+								"health"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get All Commodities",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiYW5kaSIsInBob25lIjoiMDg5MzgzMTExMTgiLCJyb2xlIjoiYWRtaW4iLCJ0aW1lc3RhbXAiOiIxMSBTZXAgMjIgMTE6MzAgV0lCIn0.qutZ-QZ509SCS1eT4UK1olmfYe1tvRODU3uQF5CezjU",
+								"type": "default"
+							}
+						],
+						"url": {
+							"raw": "0.0.0.0:5030/v1/commodity",
+							"host": [
+								"0",
+								"0",
+								"0",
+								"0"
+							],
+							"port": "5030",
+							"path": [
+								"v1",
+								"commodity"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get aggregrated commodities",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer <token>",
+								"type": "default"
+							}
+						],
+						"url": {
+							"raw": "0.0.0.0:5030/v1/commodity/aggregated",
+							"host": [
+								"0",
+								"0",
+								"0",
+								"0"
+							],
+							"port": "5030",
+							"path": [
+								"v1",
+								"commodity",
+								"aggregated"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
 			"name": "auth-app",
 			"item": [
 				{
@@ -36,7 +119,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"name\": \"andi\",\n    \"phone\": \"08938311118\",\n    \"role\": \"admin\"\n}",
+							"raw": "{\n    \"name\": \"andi\",\n    \"phone\": \"08984311118\",\n    \"role\": \"admin\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -120,54 +203,6 @@
 								"v1",
 								"user",
 								"details"
-							]
-						}
-					},
-					"response": []
-				}
-			]
-		},
-		{
-			"name": "fetch-app",
-			"item": [
-				{
-					"name": "Health check",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "0.0.0.0:5030/health",
-							"host": [
-								"0",
-								"0",
-								"0",
-								"0"
-							],
-							"port": "5030",
-							"path": [
-								"health"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Get All Commodities",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "0.0.0.0:5030/v1/commodity",
-							"host": [
-								"0",
-								"0",
-								"0",
-								"0"
-							],
-							"port": "5030",
-							"path": [
-								"v1",
-								"commodity"
 							]
 						}
 					},
