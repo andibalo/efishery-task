@@ -36,7 +36,7 @@ func (h *CommodityController) AddRoutes(r *gin.Engine) {
 	cr := r.Group(constants.V1BasePath + constants.CommodityBasePath)
 
 	cr.GET("/", middleware.CheckJWTToken(), h.getAllCommodities)
-	cr.GET("/aggregated", h.getAggregratedCommodities)
+	cr.GET("/aggregated", middleware.CheckJWTTokenAdmin(), h.getAggregratedCommodities)
 }
 
 func (h *CommodityController) getAllCommodities(c *gin.Context) {
@@ -178,7 +178,11 @@ func (h *CommodityController) getAggregratedCommodities(c *gin.Context) {
 		result = append(result, data)
 	}
 
-	c.JSON(http.StatusOK, result)
+	resp := response.NewResponse(response.Success, result)
+
+	resp.SetResponseMessage("Successfully get aggregrated commodities")
+
+	c.JSON(http.StatusOK, resp)
 }
 
 func (h *CommodityController) failedCommodityResponse(c *gin.Context, code response.Code, err error, errorMsg string) {
