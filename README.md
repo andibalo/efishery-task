@@ -151,6 +151,7 @@ This endpoint will receive a `token` which is a JWT token return the data contai
 
   - [Health Check](#get-health---health-check)
   - [Get Commodities (Protected)](#get-v1commodity---get-commodities-protected)
+  - [Get Aggregrated Commodities (Admin-only)](#get-v1aggregated---get-aggregrated-commodities-admin-only)
   
 ### GET /health - Health Check
 This endpoint can be used to verify that the app is running
@@ -205,5 +206,86 @@ Authorization: Bearer <JWT>
             "price_usd": "4.328960"
         },
 	...
+}
+```
+
+### GET /v1/aggregated - Get Aggregrated Commodities (Admin-only)
+This endpoint will fetch commodities data from https://stein.efishery.com/v1/storages/5e1edf521073e315924ceab4/list, and then returns the aggregated data by the province and weekly , and returns the max, min, avg, and median profit (assuming profit is price * size). This endpoint requires 'admin' role.
+```
+//HTTP Request Header (Bearer Token)
+Authorization: Bearer <JWT>
+//HTTP Response (Application/JSON)
+
+{
+    "code": "FE0000",
+    "status": "SUCCESS",
+    "message": "Successfully get aggregrated commodities",
+     "data": [
+	    {
+		"area_provinsi": "SULAWESI BARAT",
+		"Profit": {
+		    "week_1": {
+			"3700000": 3700000
+		    },
+		    "week_11": {
+			"2910000": 2910000
+		    },
+		    "week_13": {
+			"10080000": 10080000
+		    },
+		    "week_15": {
+			"4200000": 4200000
+		    },
+		    "week_18": {
+			"1440000": 1440000
+		    },
+		    "week_19": {
+			"1830000": 1830000
+		    },
+		    "week_2": {
+			"6000000": 6000000
+		    },
+		    "week_3": {
+			"9000000": 9000000
+		    },
+		    "week_5": {
+			"1380000": 1380000
+		    },
+		    "week_8": {
+			"7120000": 7120000
+		    }
+		},
+		"max_profit": 10080000,
+		"min_profit": 1380000,
+		"average_profit": 4766000,
+		"median_profit": 3700000
+	    },
+	    {
+		"area_provinsi": "LAMPUNG",
+		"Profit": {
+		    "week_20": {
+			"3080000": 3080000
+		    },
+		    "week_21": {
+			"1140000": 1140000
+		    },
+		    "week_3": {
+			"10650000": 10650000,
+			"2160000": 2160000
+		    },
+		    "week_5": {
+			"3250000": 3250000
+		    },
+		    "week_7": {
+			"4980000": 4980000
+		    }
+		},
+		"max_profit": 10650000,
+		"min_profit": 1140000,
+		"average_profit": 4210000,
+		"median_profit": 4980000
+    	},
+    	...
+    ]
 }
 ```
