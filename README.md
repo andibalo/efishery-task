@@ -4,6 +4,7 @@ This repo is my submission for efishery backend engineer skill test. Fingers cro
 * [Prequisites](#prequisites)
 * [Installation](#installation)
 * [Postman Collection](#postman-collection)
+* [Context Diagram](#c4-context-diagram)
 * [Auth-App](#auth-app)
 	* [Environment Variables](#auth-app-environment-variables)
 	* [Endpoints](#auth-app-api)
@@ -33,6 +34,9 @@ $ sudo docker-compose up --build
 ```
 
 Otherwise you have started the `auth-app` and `fetch-app` and can start testing out their APIs
+
+## C4 Context Diagram
+![My Remote Image](https://user-images.githubusercontent.com/47916303/189673200-d08d0a90-59a7-47a1-8ae3-9dfcdca8b0a8.png)
 
 ## Auth-App
 `auth-app` is responsible for managing user creation, password generation, and JWT generation. It is using a file-based database.
