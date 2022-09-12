@@ -8,6 +8,7 @@ import (
 	"go.uber.org/zap"
 )
 
+//go:generate mockery --name=UserService --case underscore
 type UserService interface {
 	GetJWTByPhoneAndPassword(phone, password string) (response.Code, string, error)
 	CreateUser(createUserReq *request.CreateUserRequest) (response.Code, model.User, error)

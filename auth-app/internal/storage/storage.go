@@ -12,6 +12,7 @@ type Store struct {
 	userRepository UserRepo
 }
 
+//go:generate mockery --name=Storage --case underscore
 type Storage interface {
 	CreateUser(user model.User) error
 	FetchAllUsers() (users []model.User, err error)
