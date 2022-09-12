@@ -108,9 +108,9 @@ func (h *CommodityController) getAggregratedCommodities(c *gin.Context) {
 	code, commodities, err := h.commodityService.GetAllCommodities()
 
 	if err != nil {
-		h.cfg.Logger().Error("getAllCommodities: error getting commodities", zap.Error(err))
+		h.cfg.Logger().Error("getAggregratedCommodities: error getting aggregrated commodities", zap.Error(err))
 
-		h.failedCommodityResponse(c, code, err, "error fetching commodities")
+		h.failedCommodityResponse(c, code, err, "error fetching aggregrated commodities")
 
 		return
 	}
