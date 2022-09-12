@@ -39,7 +39,7 @@ Otherwise you have started the `auth-app` and `fetch-app` and can start testing 
 ![My Remote Image](https://user-images.githubusercontent.com/47916303/189673200-d08d0a90-59a7-47a1-8ae3-9dfcdca8b0a8.png)
 
 ## Auth-App
-`auth-app` is responsible for managing user creation, password generation, and JWT generation. It is using a file-based database.
+`auth-app` is responsible for managing user creation, password generation, and JWT generation. It is using a file-based database and using the echo golang framework.
 
 ### Auth-App Environment Variables
 * `SERVER_PORT` defines which port the application will listen to 
@@ -141,7 +141,7 @@ This endpoint will receive a `token` which is a JWT token return the data contai
 ```
 
 ## Fetch-App
-`fetch-app` is responsible for resources from efishery endpoint. It also uses an in-memory caching to cache conversion rate from https://www.exchangerate-api.com.
+`fetch-app` is responsible for resources from efishery endpoint. It also uses an in-memory caching to cache conversion rate from https://www.exchangerate-api.com. It is using the Gin golang framework.
 
 ### Fetch-App Environment Variables
 * `SERVER_PORT` defines which port the application will listen to 
